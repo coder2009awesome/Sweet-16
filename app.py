@@ -3,32 +3,37 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
 import json
+import os
 
 st.set_page_config(page_title="Sweet 16 RSVP 🎉", page_icon="🎂", layout="centered")
 st.title("🎂 RSVP for Shanvi's Sweet 16 🎉")
 
 st.image("invite.png", use_container_width=True)
 
-try:
-    with open("credentials.json") as f:
-        creds_dict = json.load(f)
-except Exception as e:
-    st.write("no")
-    st.error(f"Could not load credentials.json: {e}")
-    creds_dict = None
-
 sheet = None
-if creds_dict:
-    try:
-        scope = ["https://spreadsheets.google.com/feeds",
-                 "https://www.googleapis.com/auth/drive"]
+try:
+    scope = ["https://spreadsheets.google.com/feeds",
+             "https://www.googleapis.com/auth/drive"]
+    
+    if "gcp_service_account" in st.secrets:
+        creds_dict = st.secrets["gcp_service_account"]
+
+    elif os.path.exists("credentials.json"):
+        with open("credentials.json") as f:
+            creds_dict = json.load(f)
+    else:
+        creds_dict = None
+
+    if creds_dict:
         creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
         client = gspread.authorize(creds)
         SHEET_NAME = "RSVP"
         sheet = client.open(SHEET_NAME).sheet1
         st.success("Get ready to celebrate Shanvi's sweet 16 with a bang, it's gonna be a night to remember!")
-    except Exception as e:
-        st.warning(f"Cannot connect to Google Sheet: {e}")
+    else:
+        st.warning("No credentials found. RSVP will not be saved.")
+except Exception as e:
+    st.warning(f"Cannot connect to Google Sheet: {e}")
 
 with st.form("rsvp_form", clear_on_submit=True):
     col1, col2 = st.columns(2)
