@@ -35,13 +35,13 @@ try:
 except Exception as e:
     st.warning(f"Cannot connect to Google Sheet: {e}")
 
+# --- RSVP Form ---
 with st.form("rsvp_form", clear_on_submit=True):
     col1, col2 = st.columns(2)
     first_name = col1.text_input("First Name *")
     last_name = col2.text_input("Last Name *")
     email = st.text_input("Email *")
 
-    total = st.number_input("Number of people attending", min_value=1, step=1)
     kids = st.number_input("Number of Kids", min_value=0, step=1)
     adults = st.number_input("Number of Adults", min_value=0, step=1)
 
@@ -54,7 +54,7 @@ with st.form("rsvp_form", clear_on_submit=True):
             timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             if sheet:
                 try:
-                    sheet.append_row([timestamp, first_name, last_name, email, total, kids, adults])
+                    sheet.append_row([timestamp, first_name, last_name, email, kids, adults])
                     st.success(f"Thank you {first_name}! Your RSVP has been recorded ✅")
                 except Exception as e:
                     st.error(f"Could not write to Google Sheet: {e}")
