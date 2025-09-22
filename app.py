@@ -8,7 +8,7 @@ import os
 st.set_page_config(page_title="Sweet 16 RSVP 🎉", page_icon="🎂", layout="centered")
 st.title("🎂 RSVP for Shanvi's Sweet 16 🎉")
 
-st.image("invite.png", use_container_width=True)
+st.image("invite1.png", use_container_width=True)
 
 sheet = None
 try:
